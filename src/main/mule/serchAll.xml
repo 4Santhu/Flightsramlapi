@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="serchAllFlow" doc:id="72482494-47e1-4493-a8d9-31d94abda53d" >
+		<logger level="INFO" doc:name="Logger" doc:id="69f33b4d-f27f-4d58-ba51-79289448ec57" />
+		<scatter-gather doc:name="Scatter-Gather" doc:id="6c4fade0-8f94-4fba-8e22-1bbf431c1cff" >
+			<route >
+				<flow-ref doc:name="airIndiaFlow" doc:id="b6994f45-e4d4-43d2-a8a1-61b1855cb3f4" name="airIndiaFlow"/>
+			</route>
+			<route >
+				<flow-ref doc:name="indigoFlightsFlow" doc:id="ef4eb734-fb6a-4129-961f-3263bf374fc1" name="indigoFlightsFlow"/>
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Transform Message" doc:id="27b5d92f-985d-4bdc-ac70-ef78f242aa49" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	IndigoResponce: payload[1].payload,
+	Airindiaresponce: payload[0].payload
+	}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="79ebcf43-3b1a-4900-a02f-83fe0d6f1db0" message="#[payload]"/>
+	</flow>
+</mule>

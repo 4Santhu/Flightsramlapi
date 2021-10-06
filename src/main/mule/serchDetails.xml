@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="serchDetailsFlow" doc:id="e922ab4b-cc05-4480-bd25-f0e07fee6784" >
+		<db:select doc:name="Select" doc:id="bcc20697-84b9-4010-8ef7-b55029647efe" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * from account where accountId = :accountId]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+accountId: attributes.queryParams.accountID
+}]]]></db:input-parameters>
+		</db:select>
+		<choice doc:name="Choice" doc:id="0591236d-9a05-4a7b-abe4-d4952c894ba4" >
+			<when expression="#[sizeOf(payload)&gt;0]">
+				<ee:transform doc:name="Transform Message" doc:id="910cd827-6ca4-4e02-8135-d94fcbdc75f9">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</when>
+			<otherwise >
+				<raise-error doc:name="Raise error" doc:id="56e0c65b-eb29-43c2-a6f7-ae9aa6b17ef4" type="ACC:INVALID_ACCOUNTID" description="INVALID ACCOUNT ID"/>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="4064b59b-2ae2-4eb0-b545-812790b1d117" message="Final responce is ............ #[payload]"/>
+	</flow>
+</mule>

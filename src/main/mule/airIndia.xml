@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	
+	<flow name="airIndiaFlow" doc:id="55574a2f-95e4-4fef-a411-47cd7e9258c1" >
+		<ee:transform doc:name="Transform Message" doc:id="85e03474-fb21-4096-8bd8-77369cb18a38" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://soap.training.mulesoft.com/
+---
+{
+	ns0#getFlights: {
+		from: attributes.queryParams.source,
+		to: attributes.queryParams.destination,
+		depatureDate: attributes.queryParams.DOJ
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<try doc:name="Try" doc:id="57638574-8e1b-4a3d-9ebd-e999d40759fa" >
+			<wsc:consume operation="getFlights" doc:name="Consume" doc:id="c9e51c77-9ec8-4183-8e77-13c1df92eb70" config-ref="Web_Service_Consumer_Config" />
+			<error-handler>
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f64b8590-b896-407c-b3af-a4345a09e7dd" type="WSC:BAD_REQUEST, WSC:BAD_RESPONSE, WSC:CANNOT_DISPATCH, WSC:CONNECTIVITY, WSC:ENCODING, WSC:INVALID_WSDL, WSC:RETRY_EXHAUSTED, WSC:SOAP_FAULT, WSC:TIMEOUT">
+					<ee:transform doc:name="Transform Message" doc:id="6d7b2cbb-7123-4e71-8fa6-ffef78068e37" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	statusCode: 500,
+	message: "WSDL is not responding"
+	
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				</on-error-propagate>
+			</error-handler>
+		</try>
+		<ee:transform doc:name="Transform Message" doc:id="92a24ccf-fa20-468b-93ef-a7500ee32390">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ns ns0 http://soap.training.mulesoft.com/
+---
+payload.body.ns0#getFlightsResponse.*return map ( return , indexOfReturn ) -> {
+	Id: return.ID default 0,
+	airlineName: return.airline default "",
+	fCode: return.flightCode default "",
+	fromAirportCode: return.fromAirportCode default "",
+	toAirportCode: return.toAirportCode default "",
+	departureDate: return.departureDate default "",
+	emptySeats: return.emptySeats default 0,
+	totalSeats: return.totalSeats as Number default 0,
+	price: return.price default 0,
+	planeType: return.planeType default ""
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="4b477f50-a77b-4dfd-a11d-e4991e417526" message="#[payload]"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="ca28f2c2-013d-4941-b722-4daf7b110512" type="ANY">
+				<ee:transform doc:name="Transform Message" doc:id="688fc044-a577-404a-98fe-4fb4331ac038" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

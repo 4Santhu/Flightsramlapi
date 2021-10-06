@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="d348e5a4-c7ea-4872-b9b7-804f59cde612">
+		<http:request-connection host="indigo-services.us-e2.cloudhub.io" port="80" />
+	</http:request-config>
+	<flow name="indigoFlightsFlow" doc:id="536bf398-7b17-4108-9c5d-d6fe54af7460" >
+		<logger level="INFO" doc:name="Logger" doc:id="927f94b1-3f44-4e41-9d8c-07c46ba8402a" message="responding............. "/>
+		<try doc:name="Try" doc:id="0f1e7356-367a-49bd-aa53-2cbf5de7f976" >
+			<http:request method="GET" doc:name="Request" doc:id="c9d3144c-12f4-40a3-8f5e-6b69358b0729" config-ref="HTTP_Request_configuration" path="/api/getFlights">
+			<http:query-params><![CDATA[#[output application/java
+---
+{
+	from : attributes.queryParams.source,
+	to : attributes.queryParams.destination,
+	depatureDate : attributes.queryParams.DOJ
+}]]]></http:query-params>
+		</http:request>
+			<error-handler >
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f7ddefa2-97ba-4ef5-96a6-0a24e28ee6d6" >
+					<ee:transform doc:name="Transform Message" doc:id="a8060d81-5fc6-402f-9906-86fc889b98f9" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	statusCode: 500,
+	message: "http server is not responding.. please try after some time"
+	
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				</on-error-propagate>
+			</error-handler>
+		</try>
+		<logger level="INFO" doc:name="Logger" doc:id="f13e9b4d-2548-473b-b1e0-c69613cf69ec" message="#[payload]"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7b821140-1693-49a2-a138-11943fc9a0e5" type="ANY">
+				<ee:transform doc:name="Transform Message" doc:id="2a4664fd-e907-4b72-b75f-ff3d2a87a0f1" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	statusCode: 500,
+	message: "HTTP server is not responding... try after some time"
+	
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

@@ -1,0 +1,245 @@
+#%RAML 1.0
+title: <YOUR_TITLE>
+version: v1
+baseUri: http://localhost:8081
+
+/createAccount:
+  post:
+    body:
+      application/json:
+        example:
+          {
+            "Name":"Santhosh",
+            "PhoneNO":"916071XXXX",
+            "EmailId":"4santhu@gmail.com",
+            "DOB":"01-11-2020",
+            "Gender":"male/female"
+           }
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              {
+              "message":"Account Created Successfully"
+              }
+              
+/serchDetails:
+  get:
+    queryParameters:
+      accountID:
+        example:  "1001"
+        
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+                  {
+                    "Name":"Santhosh",
+                    "PhoneNO":"916071XXXX",
+                    "EmailId":"4santhu@gmail.com",
+                    "DOB":"01-11-2020",
+                   }
+                  
+                  
+/indigoFlights:
+  get:
+    queryParameters:
+      source:
+        example:  "HYD"
+      destination:
+        example:  "DEL"
+      DOJ:
+        example:  "12-12-21"
+        
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              [
+                {
+                    "ID": 101,
+                    "airline": "Indigo",
+                    "flightCode": "IND101",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-08-2021",
+                    "emptySeats": 0,
+                    "totalSeats": 200,
+                    "price": 199,
+                    "planeType": "Indigo 737"
+                },
+                {
+                    "ID": 102,
+                    "airline": "Indigo",
+                    "flightCode": "IND102",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-08-2021",
+                    "emptySeats": 24,
+                    "totalSeats": 350,
+                    "price": 450,
+                    "planeType": "Indigo 747"
+                },
+                {
+                    "ID": 103,
+                    "airline": "Indigo",
+                    "flightCode": "IND103",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-08-2021",
+                    "emptySeats": 33,
+                    "totalSeats": 400,
+                    "price": 450,
+                    "planeType": "Indigo 757"
+                }
+              ]    
+          
+          
+/airIndia:
+  get:
+    queryParameters:
+      source:
+        example:  "HYD"
+      destination:
+        example:  "DEL"
+      DOJ:
+        example:  "12-12-21"
+        
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              [
+                {
+                    "Id": "201",
+                    "airlineName": "AirIndia",
+                    "fCode": "AI201",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-08-2021",
+                    "emptySeats": "0",
+                    "totalSeats": 200,
+                    "price": "199",
+                    "planeType": "AirIndia 737"
+                },
+                {
+                    "Id": "202",
+                    "airlineName": "AirIndia",
+                    "fCode": "AI202",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-08-2021",
+                    "emptySeats": "24",
+                    "totalSeats": 350,
+                    "price": "450",
+                    "planeType": "AirIndia 747"
+                },
+                {
+                    "Id": "203",
+                    "airlineName": "AirIndia",
+                    "fCode": "AI203",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-08-2021",
+                    "emptySeats": "33",
+                    "totalSeats": 400,
+                    "price": "450",
+                    "planeType": "AirIndia 757"
+                }
+              ]
+              
+/serchAll:
+  get:
+    queryParameters:
+      source:
+        example:  "HYD"
+      destination:
+        example:  "DEL"
+      DOJ:
+        example:  "12-12-21"
+        
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              [
+                {
+                    "Id": "201",
+                    "airlineName": "AirIndia",
+                    "fCode": "AI201",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-08-2021",
+                    "emptySeats": "0",
+                    "totalSeats": 200,
+                    "price": "199",
+                    "planeType": "AirIndia 737"
+                },
+                {
+                    "Id": "202",
+                    "airlineName": "AirIndia",
+                    "fCode": "AI202",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-08-2021",
+                    "emptySeats": "24",
+                    "totalSeats": 350,
+                    "price": "450",
+                    "planeType": "AirIndia 747"
+                },
+                {
+                    "Id": "203",
+                    "airlineName": "AirIndia",
+                    "fCode": "AI203",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-08-2021",
+                    "emptySeats": "33",
+                    "totalSeats": 400,
+                    "price": "450",
+                    "planeType": "AirIndia 757"
+                },
+                {
+                    "ID": 101,
+                    "airline": "Indigo",
+                    "flightCode": "IND101",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-08-2021",
+                    "emptySeats": 0,
+                    "totalSeats": 200,
+                    "price": 199,
+                    "planeType": "Indigo 737"
+                },
+                {
+                    "ID": 102,
+                    "airline": "Indigo",
+                    "flightCode": "IND102",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-08-2021",
+                    "emptySeats": 24,
+                    "totalSeats": 350,
+                    "price": 450,
+                    "planeType": "Indigo 747"
+                },
+                {
+                    "ID": 103,
+                    "airline": "Indigo",
+                    "flightCode": "IND103",
+                    "fromAirportCode": "HYD",
+                    "toAirportCode": "BANG",
+                    "departureDate": "31-08-2021",
+                    "emptySeats": 33,
+                    "totalSeats": 400,
+                    "price": 450,
+                    "planeType": "Indigo 757"
+                }
+              ]  
+          
+          

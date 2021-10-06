@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	
+	<flow name="createAccountFlow" doc:id="486b9d85-1b9f-4720-a1a8-bbfe1cb76488" >
+		<logger level="INFO" doc:name="Logger" doc:id="a4021459-0b9d-4da5-bc0d-3c8be6a0a274" message="Createing Account............. "/>
+		<db:insert doc:name="Insert" doc:id="86cac80f-6175-43ba-8710-082e42c6a5f2" config-ref="Database_Config">
+			<db:sql ><![CDATA[insert into Account(name, phone, email, gender, dateOfBirth) 
+values (:name, :phone, :email, :gender, :dateOfBirth) ;]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+		name:payload.Name,
+		phone:payload.PhoneNO,
+		email:payload.EmailId,
+		gender:payload.Gender,
+		dateOfBirth:payload.DOB
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="34568ade-26a3-4da1-b62b-2dc8f5c65873" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-payload value='Account created sucessfully. ' doc:name="Set Payload" doc:id="8aee12f8-113d-4d3e-a1dc-045f4574ecd0" />
+		<logger level="INFO" doc:name="Logger" doc:id="0237cc72-b1d4-4320-ba79-c4469dd47a87" message='Final message is .............. #[payload]'/>
+	</flow>
+</mule>
